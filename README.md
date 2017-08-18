@@ -1,4 +1,5 @@
-# pathways-search
+# Networks App 
+(Pathway Commons)
 
 ## Setup and Installation
 
