@@ -15,6 +15,7 @@ import queryString from 'query-string';
 import {hardReload} from '../../App.js';
 import {SearchOptions} from './SearchOptions.jsx';
 import {SearchFaq} from './SearchFaq.jsx';
+import {queryProcessing} from '../helpers/queryProcessing.js';
 
 
 // SearchHeader
@@ -35,18 +36,9 @@ export class SearchHeader extends React.Component {
 	}
 
 	updateTerm() {
-		if (this.state.q.match(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/)) {
-			this.props.history.push({pathname: "/view", search: queryString.stringify({uri: this.state.q})});
-		}
-		else if (this.state.q != this.props.query.q) {
-			this.props.updateSearchArg({ // Set search and filter parameters to be used when q changes
-				q: this.state.q,
-				lt: 250,
-				gt: 3,
-				type: "Pathway",
-				enhance: this.props.query.enhance
-			});
-		}
+		this.setState({q: queryProcessing(this.state.q)});
+		this.props.history.push({pathname: "/view", search: queryString.stringify({uri: this.state.q})});
+        //TODO: does the above command open a new window/tab at /view?uri=q..?
 	}
 
 	submit(e) {
@@ -83,10 +75,10 @@ export class SearchHeader extends React.Component {
 
 		const tip_search = (
 			<Popover className="info-tip" id="popover-brand" placement="bottom" title="Search!">
-				Access metabolic pathways, signalling pathways and gene regulatory networks sourced from public pathway databases.
+				Access metabolic, signalling and gene regulatory networks sourced from public pathway databases.
 				<br/>
 				<br/>
-				<a className="clickable" onClick={e => this.populateWithExample(e, "ACVR2A BMP2 BMPR1B SMAD4")}>e.g. Gene list: 'Signaling by BMP' (Reactome)</a>
+				<a className="clickable" onClick={e => this.populateWithExample(e, "ACVR2A BMP2 BMPR1B SMAD4")}>e.g. gene list from 'Signaling by BMP' process (Reactome)</a>
 			</Popover>
 		);
 
@@ -98,7 +90,7 @@ export class SearchHeader extends React.Component {
 
 		const tip_filter = (
 			<Popover className="info-tip hidden-xs" id="popover-filter" placement="bottom" title="Filter">
-				Refine search results by number of participants or data provider.
+				Filter by data provider.
 			</Popover>
 		);
 
@@ -135,15 +127,15 @@ export class SearchHeader extends React.Component {
 												className="hidden-xs"
 												type="text"
 												placeholder={ !this.props.embed ?
-													"Search pathways by name, gene names or type a URI" :
-													"Search pathways in Pathway Commons"
+													"Query by gene/chemical names or IDs" :
+													"get a sub-network from Pathway Commons"
 												}
 											defaultValue={this.props.query.q}
 											onChange={(e) => this.onChange(e)} onKeyPress={(e) => this.submit(e)} />
 											<FormControl
 												className="hidden-sm hidden-md hidden-lg"
 												type="text"
-												placeholder="Search pathways by name"
+												placeholder="Query by gene/chemical name/IDs"
 											defaultValue={this.props.query.q}
 											onChange={(e) => this.onChange(e)} onKeyPress={(e) => this.submit(e)} />
 											<InputGroup.Addon>

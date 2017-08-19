@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import {Col, Button, Glyphicon} from 'react-bootstrap';
 import isEmpty from 'lodash.isempty';
 import {saveAs} from 'file-saver';
-import {get} from 'pathway-commons';
+import {graph} from 'pathway-commons';
 import {DownloadCard} from './DownloadCard.jsx';
 import {Spinner} from '../../../components/Spinner.jsx';
 
@@ -27,8 +27,9 @@ export class Downloads extends React.Component {
 
 	initiatePCDownload(format, file_ext) {
 		this.toggleLoading();
-		get()
-			.uri(this.props.uri)
+		graph()
+			.source(this.props.uri)
+			.kind("pathsbetween") //TODO: use a parameter value for the graph kind
 			.format(format)
 			.fetch()
 			.then(content => this.saveDownload(file_ext, typeof content === "object" ? JSON.stringify(content) : content))
@@ -40,9 +41,7 @@ export class Downloads extends React.Component {
 	}
 
 	generatePathwayName() {
-		const FILENAME_CUTOFF = 20;
-		var filename = this.props.name || "pathway";
-		return filename.substr(0, filename.length < FILENAME_CUTOFF ? filename.length : FILENAME_CUTOFF).replace(/ /g, "_");
+		return "sub-network";
 	}
 
 	render() {

@@ -1,8 +1,8 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 import {Col, Glyphicon, Navbar, Nav, NavItem, NavDropdown, MenuItem, OverlayTrigger, Popover} from 'react-bootstrap';
-import {get, traverse} from 'pathway-commons';
-
+// import {get, graph, traverse} from 'pathway-commons';
+import {graph} from 'pathway-commons';
 import {ErrorMessage} from '../components/ErrorMessage.jsx';
 import {Graph} from './components/graph/Graph.jsx';
 import {ModalFramework} from './components/menu/ModalFramework.jsx';
@@ -24,25 +24,33 @@ export class View extends React.Component {
 			show: false
 		};
 
-		get()
-			.uri(this.props.query.uri)
-			.format("SBGN")
-			.fetch()
-			.then(responseText => this.setState({data: responseText}));
+        graph()
+        	.source(this.props.query.uri) //TODO: change to .source later
+            // .target(this.props.query.target)
+			.kind("pathsbetween")
+        	.format("SBGN")
+        	.fetch()
+        	.then(responseText => this.setState({data: responseText}));
 
-		traverse()
-			.uri(this.props.query.uri)
-			.path("Named/displayName")
-			.format("json")
-			.fetch()
-			.then(responseObject => this.setState({name: responseObject.traverseEntry[0].value.pop()}));
-
-		traverse()
-			.uri(this.props.query.uri)
-			.path("Entity/dataSource/displayName")
-			.format("json")
-			.fetch()
-			.then(responseObject => this.setState({datasource: responseObject.traverseEntry[0].value.pop()}));
+		// get()
+		// 	.uri(this.props.query.uri)
+		// 	.format("SBGN")
+		// 	.fetch()
+		// 	.then(responseText => this.setState({data: responseText}));
+        //
+		// traverse()
+		// 	.uri(this.props.query.uri)
+		// 	.path("Named/displayName")
+		// 	.format("json")
+		// 	.fetch()
+		// 	.then(responseObject => this.setState({name: responseObject.traverseEntry[0].value.pop()}));
+        //
+		// traverse()
+		// 	.uri(this.props.query.uri)
+		// 	.path("Entity/dataSource/displayName")
+		// 	.format("json")
+		// 	.fetch()
+		// 	.then(responseObject => this.setState({datasource: responseObject.traverseEntry[0].value.pop()}));
 
 		this.props.logPageView( this.props.history.location );
 		this.props.logEvent({

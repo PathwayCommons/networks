@@ -8,7 +8,7 @@ import {Index} from './Index.jsx';
 import styles from '!style-loader!css-loader!postcss-loader!../styles/index.css';
 
 // Set user in pathway-commons
-utilities.user("pathways-search");
+utilities.user("networks-app");
 
 const mountElement = document.getElementById('container');
 

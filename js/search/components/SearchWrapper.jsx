@@ -1,10 +1,6 @@
 import React from 'react';
 import isArray from 'lodash.isarray';
-import isEqual from 'lodash.isequal';
 import queryString from 'query-string';
-import {search, datasources} from 'pathway-commons';
-import {queryFetch} from '../helpers/queryFetch.js';
-import {Spinner} from '../../components/Spinner.jsx';
 
 // SearchWrapper
 // Prop Dependencies ::
@@ -15,36 +11,9 @@ export class SearchWrapper extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			searchResult: {},
 			processedQuery: "",
 			loading: false
 		};
-	}
-
-	// If query prop or dataSource is changed then re-render
-	componentWillReceiveProps(nextProps) {
-		if (!isEqual(this.props.query, nextProps.query)) {
-			this.getSearchResult(nextProps.query);
-		}
-	}
-
-	componentDidMount(){
-		this.getSearchResult(this.props.query);
-	}
-
-	handleLoading( isLoading ){
-		this.setState({loading: isLoading});
-	}
-
-	getSearchResult(queryObject) {
-		this.handleLoading( true );
-		queryFetch(queryObject)
-			.then(searchResult => {
-				this.setState({
-					searchResult: searchResult,
-					loading: false
-				});
-			});
 	}
 
 	updateSearchArg(updateObject) {
@@ -55,7 +24,7 @@ export class SearchWrapper extends React.Component {
 
 		if(this.props.embed === true) {
 			var openUrl = window.location.href.replace("/embed", "");
-			window.open(openUrl, "Pathway Commons Search");
+			window.open(openUrl, "Pathway Commons Networks");
 		}
 	}
 
@@ -73,22 +42,15 @@ export class SearchWrapper extends React.Component {
 				output[property] = updateObject[property];
 			}
 		}
-
-		// If the page property is the same in old and new, assume some other property has changed, therefore delete page property to go back to page 1
-		if(this.props.query.page == output.page) {
-			delete output.page;
-		}
 		return output;
 	}
 
 	render() {
 		return (
 			<div className="SearchWrapper">
-				<Spinner full hidden={!this.state.loading} />
 				{React.Children.map(this.props.children, (child) => React.cloneElement(child, {
 					...this.props,
-					...this.state,
-					updateSearchArg: object => this.updateSearchArg(object)
+					...this.state
 				}))}
 			</div>
 		);
