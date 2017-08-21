@@ -1,5 +1,5 @@
 # Networks App 
-(Pathway Commons)
+(was forked from the pathways-search repo; then - modified to enable PC BioPAX Graph queries and remove full-text search for pathways feature; then it was mirrored from Igor's personal profile to here - to continue improving.)
 
 ## Setup and Installation
 
