@@ -15,7 +15,7 @@ import queryString from 'query-string';
 import {hardReload} from '../../App.js';
 import {SearchOptions} from './SearchOptions.jsx';
 import {SearchFaq} from './SearchFaq.jsx';
-import {queryProcessing} from '../helpers/queryProcessing.js';
+import {queryProcessing} from '../helpers/QueryProcessing.js';
 
 
 // SearchHeader
@@ -36,9 +36,15 @@ export class SearchHeader extends React.Component {
 	}
 
 	updateTerm() {
-		this.setState({q: queryProcessing(this.state.q)});
-		this.props.history.push({pathname: "/view", search: queryString.stringify({uri: this.state.q})});
-        //TODO: does the above command open a new window/tab at /view?uri=q..?
+        if (this.state.q) {
+        	queryProcessing(this.state.q).then( sources => {
+                // console.log("sources=" + sources);
+                // this.setState({q: sources});
+                this.props.history.push({pathname: "/view", search: queryString.stringify({uri: sources})});
+			});
+    	} else {
+            console.log("Empty query string");
+		}
 	}
 
 	submit(e) {

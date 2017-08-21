@@ -25,7 +25,7 @@ let getHGNCData = fetch("hgncSymbols.txt", {method: 'get', mode: 'no-cors'})
 	.then(dataArray => new Set(dataArray));
 
 let tokenPrefix = ( phrase, collection ) => {
-	return phrase
+	var symbols = phrase
 		.split(/\s+/g)
 		.filter((token) => {// exclude any whitespace-separated tokens that are NOT gene symbols
             // regex checks
@@ -36,24 +36,14 @@ let tokenPrefix = ( phrase, collection ) => {
 			}
 			return isSymbol;
 		});
+	// console.log("symbols: " + symbols); //works as expected here
+	return symbols;
 };
 
-export let queryProcessing = (query, failureCount = 0) => {
-	// Check q to ensure it contains a valid value otherwise return q
-	if(typeof query.q === "string" && query.q.length) {
-		var words = query.q.trim();
-	}
-	else {
-		return Promise.resolve(query.q);
-	}
-
-	if( failureCount === 0 ) {
-		//filter out non-gene-symbols; then, join the gene symbols with commas
-		return getHGNCData
-			.then( tokenPrefix.bind( null, words ) ) //implicit Promise result
-			.then( result => result.join(",") );
-	} else {
-		 // conclude no results available and return null
-		return Promise.resolve(null);
-	}
+export let queryProcessing = (query) => {
+    //filter out non-gene-symbols; then, join the gene symbols with commas
+	var q = query.trim();
+    return getHGNCData
+		.then( tokenPrefix.bind( null, q ) ) // implicit Promise result
+        .then( result => result.join(',') );
 };
